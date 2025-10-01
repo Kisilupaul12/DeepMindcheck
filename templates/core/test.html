@@ -1,0 +1,96 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}System Test - DeepMindCheck{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold text-success">✅ System Test</h1>
+                <p class="lead text-muted">Django Application Status Check</p>
+            </div>
+            
+            <!-- System Information -->
+            <div class="glass-card p-4 mb-4">
+                <h4 class="mb-4">
+                    <i class="fas fa-server text-primary me-2"></i>System Information
+                </h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li><strong>Django Version:</strong> {{ django_version }}</li>
+                            <li><strong>Python Version:</strong> {{ python_version }}</li>
+                            <li><strong>Debug Mode:</strong> 
+                                {% if debug_mode %}
+                                    <span class="badge bg-warning">ON</span>
+                                {% else %}
+                                    <span class="badge bg-success">OFF</span>
+                                {% endif %}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li><strong>Database:</strong> {{ database_engine|default:"SQLite" }}</li>
+                            <li><strong>Static URL:</strong> {{ static_url }}</li>
+                            <li><strong>Installed Apps:</strong> {{ installed_apps }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Test Results -->
+            <div class="glass-card p-4 mb-4">
+                <h4 class="mb-4">
+                    <i class="fas fa-check-circle text-success me-2"></i>Component Tests
+                </h4>
+                {% for test in tests %}
+                <div class="d-flex align-items-center mb-3 p-3 bg-light rounded">
+                    <div class="me-3">
+                        {% if test.status == 'success' %}
+                            <i class="fas fa-check-circle text-success fa-2x"></i>
+                        {% elif test.status == 'warning' %}
+                            <i class="fas fa-exclamation-triangle text-warning fa-2x"></i>
+                        {% else %}
+                            <i class="fas fa-times-circle text-danger fa-2x"></i>
+                        {% endif %}
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-1">{{ test.name }}</h6>
+                        <small class="text-muted">{{ test.details }}</small>
+                    </div>
+                    <div>
+                        <span class="badge bg-{{ test.status|default:'secondary' }}">
+                            {{ test.status|upper }}
+                        </span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="glass-card p-4">
+                <h4 class="mb-4">
+                    <i class="fas fa-tools text-primary me-2"></i>Quick Actions
+                </h4>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <a href="{% url 'home' %}" class="btn btn-primary">
+                        <i class="fas fa-home me-2"></i>Home Page
+                    </a>
+                    <a href="{% url 'analyze' %}" class="btn btn-success">
+                        <i class="fas fa-brain me-2"></i>Test Analysis
+                    </a>
+                    <a href="{% url 'analytics_dashboard' %}" class="btn btn-warning">
+                        <i class="fas fa-chart-bar me-2"></i>Dashboard
+                    </a>
+                    <a href="/admin/" class="btn btn-info" target="_blank">
+                        <i class="fas fa-cog me-2"></i>Admin Panel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

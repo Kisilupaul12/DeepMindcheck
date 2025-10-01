@@ -1,0 +1,294 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}DeepMindCheck - AI-Powered Mental Health Analysis{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 8rem 0 6rem;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='10' cy='10' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+        animation: float 20s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+    }
+    
+    .feature-section {
+        padding: 6rem 0;
+        background: #f8fafc;
+    }
+    
+    .stats-section {
+        padding: 4rem 0;
+        background: white;
+    }
+    
+    .cta-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 5rem 0;
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6" data-aos="fade-right">
+                <h1 class="display-2 fw-bold mb-4">
+                    AI-Powered<br>
+                    <span class="text-warning">Mental Health</span><br>
+                    Analysis
+                </h1>
+                <p class="lead mb-5">
+                    Understanding your mental well-being through advanced natural language processing. 
+                    Get instant, confidential insights from your written thoughts and expressions.
+                </p>
+                <div class="d-flex flex-column flex-md-row gap-3">
+                    <a href="{% url 'analyze' %}" class="btn btn-light btn-lg px-5">
+                        <i class="fas fa-brain me-2"></i>Try Analysis
+                    </a>
+                    <a href="{% url 'about' %}" class="btn btn-outline-light btn-lg px-5">
+                        <i class="fas fa-info-circle me-2"></i>Learn More
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="glass-card p-5 mt-5 mt-lg-0">
+                    <h4 class="text-dark mb-4">
+                        <i class="fas fa-chart-line text-primary me-2"></i>
+                        Platform Statistics
+                    </h4>
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <div class="stats-number text-primary">{{ total_analyses|default:0 }}</div>
+                            <div class="stats-label text-muted">Analyses</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="stats-number text-success">{{ avg_confidence|floatformat:1 }}%</div>
+                            <div class="stats-label text-muted">Avg Confidence</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="stats-number text-warning">{{ predictions_today|default:0 }}</div>
+                            <div class="stats-label text-muted">Today</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="feature-section">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="display-4 fw-bold text-dark mb-3">Powerful Features</h2>
+            <p class="lead text-muted">Advanced AI technology meets mental health awareness</p>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-card text-center">
+                    <div class="feature-icon icon-primary mb-3">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Advanced AI Models</h4>
+                    <p class="text-muted">
+                        State-of-the-art natural language processing models trained specifically 
+                        for mental health analysis with high accuracy rates.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-card text-center">
+                    <div class="feature-icon icon-success mb-3">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Privacy Protected</h4>
+                    <p class="text-muted">
+                        Your data is processed securely and anonymously. We prioritize your privacy 
+                        and never store personal identifying information.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-card text-center">
+                    <div class="feature-icon icon-warning mb-3">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Instant Results</h4>
+                    <p class="text-muted">
+                        Get comprehensive analysis results in seconds with detailed explanations 
+                        and actionable recommendations for your well-being.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="400">
+                <div class="feature-card text-center">
+                    <div class="feature-icon icon-danger mb-3">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Real-time Feedback</h4>
+                    <p class="text-muted">
+                        Receive immediate insights with confidence scores and probability 
+                        distributions for transparent, understandable results.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="500">
+                <div class="feature-card text-center">
+                    <div class="feature-icon icon-info mb-3">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Research-Backed</h4>
+                    <p class="text-muted">
+                        Built on peer-reviewed research and validated through extensive testing 
+                        with mental health professionals.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="600">
+                <div class="feature-card text-center">
+                    <div class="feature-icon icon-primary mb-3">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Support Resources</h4>
+                    <p class="text-muted">
+                        Access to mental health resources, recommendations, and guidance 
+                        for seeking professional help when needed.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="display-5 fw-bold text-dark mb-3">How It Works</h2>
+            <p class="lead text-muted">Simple, fast, and confidential mental health analysis</p>
+        </div>
+        
+        <div class="row align-items-center">
+            <div class="col-lg-3 mb-4" data-aos="zoom-in" data-aos-delay="100">
+                <div class="text-center">
+                    <div class="feature-icon icon-primary mb-3 mx-auto" style="width: 100px; height: 100px; font-size: 2.5rem;">
+                        <span class="fw-bold">1</span>
+                    </div>
+                    <h5 class="fw-bold mb-2">Enter Your Text</h5>
+                    <p class="text-muted">Write or paste your thoughts, feelings, or journal entries</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 mb-4" data-aos="zoom-in" data-aos-delay="200">
+                <div class="text-center">
+                    <div class="feature-icon icon-success mb-3 mx-auto" style="width: 100px; height: 100px; font-size: 2.5rem;">
+                        <span class="fw-bold">2</span>
+                    </div>
+                    <h5 class="fw-bold mb-2">AI Analysis</h5>
+                    <p class="text-muted">Our advanced AI models process your text instantly</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 mb-4" data-aos="zoom-in" data-aos-delay="300">
+                <div class="text-center">
+                    <div class="feature-icon icon-warning mb-3 mx-auto" style="width: 100px; height: 100px; font-size: 2.5rem;">
+                        <span class="fw-bold">3</span>
+                    </div>
+                    <h5 class="fw-bold mb-2">Get Results</h5>
+                    <p class="text-muted">Receive detailed insights with confidence scores</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 mb-4" data-aos="zoom-in" data-aos-delay="400">
+                <div class="text-center">
+                    <div class="feature-icon icon-danger mb-3 mx-auto" style="width: 100px; height: 100px; font-size: 2.5rem;">
+                        <span class="fw-bold">4</span>
+                    </div>
+                    <h5 class="fw-bold mb-2">Take Action</h5>
+                    <p class="text-muted">Follow personalized recommendations for your wellbeing</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container text-center">
+        <div class="row justify-content-center">
+            <div class="col-lg-8" data-aos="zoom-in">
+                <h2 class="display-5 fw-bold mb-4">Ready to Understand Your Mental Health?</h2>
+                <p class="lead mb-4">
+                    Take the first step towards better mental health awareness. Our AI analysis 
+                    provides insights that can help guide your wellness journey.
+                </p>
+                <a href="{% url 'analyze' %}" class="btn btn-light btn-lg px-5">
+                    <i class="fas fa-rocket me-2"></i>Start Analysis Now
+                </a>
+                <p class="mt-4 small">
+                    <i class="fas fa-lock me-2"></i>100% Confidential and Secure
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Important Disclaimer -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="alert alert-warning border-0">
+                    <div class="d-flex">
+                        <div class="me-3">
+                            <i class="fas fa-exclamation-triangle fa-2x text-warning"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-2">Important Disclaimer</h6>
+                            <p class="mb-0">
+                                This tool is for educational and awareness purposes only. It is not a substitute 
+                                for professional medical advice, diagnosis, or treatment. If you're experiencing 
+                                mental health concerns, please consult with a qualified healthcare provider.
+                            </p>
+                            <hr>
+                            <p class="mb-0 small">
+                                <strong>Crisis Resources:</strong> If you're in immediate distress, contact your 
+                                local emergency services or a crisis helpline.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

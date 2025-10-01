@@ -1,0 +1,102 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Contact Us - DeepMindCheck{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold text-gradient">Contact Us</h1>
+                <p class="lead text-muted">Get in touch with our team</p>
+            </div>
+            
+            <!-- Contact Form -->
+            <div class="glass-card p-5 mb-5">
+                <form method="post" data-validate="true">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="name" class="form-label fw-semibold">
+                                <i class="fas fa-user text-primary me-2"></i>Full Name
+                            </label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label fw-semibold">
+                                <i class="fas fa-envelope text-primary me-2"></i>Email Address
+                            </label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="subject" class="form-label fw-semibold">
+                            <i class="fas fa-tag text-primary me-2"></i>Subject
+                        </label>
+                        <select class="form-select" id="subject" name="subject" required>
+                            <option value="">Choose a subject...</option>
+                            <option value="General Inquiry">General Inquiry</option>
+                            <option value="Technical Support">Technical Support</option>
+                            <option value="Research Collaboration">Research Collaboration</option>
+                            <option value="Media Inquiry">Media Inquiry</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="message" class="form-label fw-semibold">
+                            <i class="fas fa-message text-primary me-2"></i>Message
+                        </label>
+                        <textarea class="form-control" id="message" name="message" rows="6" 
+                                  placeholder="Tell us how we can help you..." required></textarea>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary btn-lg px-5">
+                            <i class="fas fa-paper-plane me-2"></i>Send Message
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Contact Information -->
+            <div class="row">
+                <div class="col-md-4 text-center mb-4">
+                    <div class="feature-icon icon-primary mb-3" style="width: 80px; height: 80px;">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h6 class="fw-bold">Email Us</h6>
+                    <p class="text-muted">info@deepmindcheck.com</p>
+                </div>
+                <div class="col-md-4 text-center mb-4">
+                    <div class="feature-icon icon-success mb-3" style="width: 80px; height: 80px;">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <h6 class="fw-bold">Institution</h6>
+                    <p class="text-muted">Dedan Kimathi University<br>of Technology</p>
+                </div>
+                <div class="col-md-4 text-center mb-4">
+                    <div class="feature-icon icon-warning mb-3" style="width: 80px; height: 80px;">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h6 class="fw-bold">Response Time</h6>
+                    <p class="text-muted">Within 24 hours</p>
+                </div>
+            </div>
+            
+            <!-- Important Notice -->
+            <div class="alert alert-info border-0 mt-4">
+                <h6 class="fw-bold mb-2">
+                    <i class="fas fa-info-circle me-2"></i>Important Notice
+                </h6>
+                <p class="mb-0">
+                    If you're experiencing a mental health emergency, please contact your local 
+                    emergency services immediately or call a crisis helpline in your area.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

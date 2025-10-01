@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="DeepMindCheck - AI-Powered Mental Health Text Analysis Platform">
+    <meta name="keywords" content="mental health, AI, text analysis, depression, anxiety">
+    <meta name="author" content="DeepMindCheck Team">
+    
+    <title>{% block title %}DeepMindCheck - AI Mental Health Analysis{% endblock %}</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{% load static %}{% static 'images/favicon.ico' %}">
+    
+    <!-- External CSS Libraries -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    {% load static %}
+    <link href="{% static 'css/main.css' %}" rel="stylesheet">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="{% block body_class %}{% endblock %}">
+    
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gradient fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{% url 'home' %}">
+                <i class="fas fa-brain text-primary me-2"></i>
+                DeepMindCheck
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">
+                            <i class="fas fa-home me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'analyze' %}">
+                            <i class="fas fa-brain me-1"></i>Analyze
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'analytics_dashboard' %}">
+                            <i class="fas fa-chart-bar me-1"></i>Analytics
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'about' %}">
+                            <i class="fas fa-info-circle me-1"></i>About
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'contact' %}">
+                            <i class="fas fa-envelope me-1"></i>Contact
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer bg-dark text-light py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <h5 class="text-primary mb-3">
+                        <i class="fas fa-brain me-2"></i>DeepMindCheck
+                    </h5>
+                    <p class="text-muted">
+                        Advanced AI-powered platform for mental health text analysis. 
+                        Helping individuals understand their mental well-being through technology.
+                    </p>
+                    <div class="social-links">
+                        <a href="#" class="text-muted me-3"><i class="fab fa-twitter fa-lg"></i></a>
+                        <a href="#" class="text-muted me-3"><i class="fab fa-linkedin fa-lg"></i></a>
+                        <a href="#" class="text-muted me-3"><i class="fab fa-github fa-lg"></i></a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-2 mb-4">
+                    <h6 class="text-white mb-3">Platform</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'home' %}" class="text-muted">Home</a></li>
+                        <li><a href="{% url 'analyze' %}" class="text-muted">Analysis</a></li>
+                        <li><a href="{% url 'analytics_dashboard' %}" class="text-muted">Analytics</a></li>
+                        <li><a href="{% url 'about' %}" class="text-muted">About</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-lg-2 mb-4">
+                    <h6 class="text-white mb-3">Resources</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-muted">Documentation</a></li>
+                        <li><a href="#" class="text-muted">API Reference</a></li>
+                        <li><a href="#" class="text-muted">Research</a></li>
+                        <li><a href="#" class="text-muted">Blog</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-lg-2 mb-4">
+                    <h6 class="text-white mb-3">Support</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'contact' %}" class="text-muted">Contact</a></li>
+                        <li><a href="#" class="text-muted">Help Center</a></li>
+                        <li><a href="#" class="text-muted">Privacy</a></li>
+                        <li><a href="#" class="text-muted">Terms</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-lg-2 mb-4">
+                    <h6 class="text-white mb-3">Crisis Resources</h6>
+                    <ul class="list-unstyled small">
+                        <li><a href="tel:988" class="text-danger">988 - Crisis Lifeline</a></li>
+                        <li><a href="tel:741741" class="text-warning">741741 - Crisis Text</a></li>
+                        <li><a href="#" class="text-info">Emergency Services</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <hr class="my-4">
+            
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="text-muted mb-0">
+                        &copy; 2025 DeepMindCheck. All rights reserved.
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="text-muted mb-0">
+                        <i class="fas fa-heart text-danger me-1"></i>
+                        Made for mental health awareness
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="{% static 'js/main.js' %}"></script>
+    
+    {% block extra_js %}{% endblock %}
+
+    <!-- Initialize AOS (Animate On Scroll) -->
+    <script>
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true
+        });
+    </script>
+</body>
+</html>

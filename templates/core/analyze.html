@@ -1,0 +1,98 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Text Analysis - DeepMindCheck{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold text-gradient">AI Text Analysis</h1>
+                <p class="lead text-muted">Enter your text below for instant mental health analysis</p>
+            </div>
+            
+            <div class="analysis-interface">
+                <form id="analysisForm" data-validate="true">
+                    <div class="mb-4">
+                        <label for="textInput" class="form-label fw-semibold">
+                            <i class="fas fa-edit text-primary me-2"></i>Your Text
+                        </label>
+                        <textarea 
+                            class="form-control text-input" 
+                            id="textInput" 
+                            placeholder="Share your thoughts, feelings, or experiences here..."
+                            data-auto-resize="true"
+                            required>
+                        </textarea>
+                        <div id="charCount" class="form-text text-muted">
+                            <i class="fas fa-info-circle me-1"></i>Minimum 10 characters required.
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="modelSelect" class="form-label fw-semibold">
+                                <i class="fas fa-cog text-primary me-2"></i>Analysis Model
+                            </label>
+                            <select class="form-select" id="modelSelect">
+                                <option value="baseline">Baseline Model (Fast)</option>
+                                <option value="advanced">Advanced Model (Accurate)</option
+                                    <option value="ensemble">Ensemble Model (Best)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                <i class="fas fa-cog text-primary me-2"></i>Options
+                            </label>
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" id="includeExplanation">
+                                <label class="form-check-label" for="includeExplanation">
+                                    Include detailed explanation
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary btn-lg px-5">
+                            <i class="fas fa-brain me-2"></i>Analyze Text
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-lg px-4 ms-3" data-clear-form="analysisForm">
+                            <i class="fas fa-eraser me-2"></i>Clear
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- Loading Spinner -->
+                <div id="loadingSpinner" class="loading-spinner">
+                    <div class="spinner-custom"></div>
+                    <h5>Analyzing your text...</h5>
+                    <p class="text-muted">This may take a few moments</p>
+                </div>
+                
+                <!-- Results -->
+                <div id="results"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Important Disclaimer -->
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="alert alert-warning border-0">
+                <h6 class="fw-bold mb-2">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Important Disclaimer
+                </h6>
+                <p class="mb-0">
+                    This tool is for educational and awareness purposes only. It is not a substitute 
+                    for professional medical advice, diagnosis, or treatment. If you're experiencing 
+                    mental health concerns, please consult with a qualified healthcare provider.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

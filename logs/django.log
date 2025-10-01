@@ -1,0 +1,135 @@
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 10664
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 2117
+"GET / HTTP/1.1" 200 10664
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 2117
+Not Found: /analyze/
+"GET /analyze/ HTTP/1.1" 404 2108
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 10664
+"GET / HTTP/1.1" 200 10664
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 10664
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 2117
+Not Found: /analyze/
+"GET /analyze/ HTTP/1.1" 404 2108
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 10664
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 2117
+"GET / HTTP/1.1" 200 10664
+"GET / HTTP/1.1" 200 10664
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 2117
+Not Found: /analyze/
+"GET /analyze/ HTTP/1.1" 404 2108
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 10664
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 2117
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 10664
+Not Found: /about/
+"GET /about/ HTTP/1.1" 404 2102
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 10664
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 10664
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 2117
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 10664
+"GET / HTTP/1.1" 200 10664
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 10664
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 10664
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 2117
+Not Found: /test-working/
+"GET /test-working/ HTTP/1.1" 404 2123
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 2117
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+C:\Users\dell\OneDrive\Desktop\deepmindcheck\api\urls.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Internal Server Error: /
+Traceback (most recent call last):
+  File "C:\Projects\deepmindcheck\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Projects\deepmindcheck\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Projects\deepmindcheck\core\views.py", line 24, in home_view
+    created_at__date=timezone.now().date()
+                     ^^^^^^^^^^^^
+AttributeError: 'int' object has no attribute 'now'
+"GET / HTTP/1.1" 500 69950
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 3527
+C:\Projects\deepmindcheck\core\views.py changed, reloading.
+Watching for file changes with StatReloader
+Home page accessed from 127.0.0.1
+"GET / HTTP/1.1" 200 0
+Watching for file changes with StatReloader
+Home page accessed from 127.0.0.1
+"GET / HTTP/1.1" 200 20125
+"GET /static/js/main.js HTTP/1.1" 200 23509
+"GET /static/css/main.css HTTP/1.1" 200 17043
+"GET /static/images/favicon.ico HTTP/1.1" 404 1914
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Home page accessed from 127.0.0.1
+"GET / HTTP/1.1" 200 20125
+"GET /static/js/main.js HTTP/1.1" 304 0
+"GET /static/css/main.css HTTP/1.1" 304 0
+"GET /static/images/favicon.ico HTTP/1.1" 404 1914
+Home page accessed from 127.0.0.1
+"GET / HTTP/1.1" 200 20125
+"GET /static/css/main.css HTTP/1.1" 304 0
+"GET /static/js/main.js HTTP/1.1" 304 0
+"GET /analyze/ HTTP/1.1" 200 11960
+"GET /analytics/dashboard/ HTTP/1.1" 200 10059
+"GET /about/ HTTP/1.1" 200 15843
+"GET /static/images/team/paul.jpg HTTP/1.1" 404 1920
+"GET /contact/ HTTP/1.1" 200 12452
+Home page accessed from 127.0.0.1
+"GET / HTTP/1.1" 200 20125
+"GET /analyze/ HTTP/1.1" 200 11960
+"GET /analytics/dashboard/ HTTP/1.1" 200 10059
+"GET /contact/ HTTP/1.1" 200 12452
+"GET /about/ HTTP/1.1" 200 15843
+"GET /static/images/team/paul.jpg HTTP/1.1" 404 1920
+Home page accessed from 127.0.0.1
+"GET / HTTP/1.1" 200 20125
+Watching for file changes with StatReloader
+Home page accessed from 127.0.0.1
+"GET / HTTP/1.1" 200 20125
+"GET /analyze/ HTTP/1.1" 200 11960
+"GET /about/ HTTP/1.1" 200 15843
+"GET /static/images/team/paul.jpg HTTP/1.1" 404 1920
+C:\Projects\deepmindcheck\core\views.py changed, reloading.
+Watching for file changes with StatReloader
+Home page accessed from 127.0.0.1
+"GET / HTTP/1.1" 200 20125
+"GET /analyze/ HTTP/1.1" 200 11960
+"GET /analytics/dashboard/ HTTP/1.1" 200 10059
+"GET /about/ HTTP/1.1" 200 15844
+"GET /static/images/team/MyPic.jpg HTTP/1.1" 404 1923
+"GET /about/ HTTP/1.1" 200 15844
+"GET /static/images/team/MyPic.jpg HTTP/1.1" 404 1923
+C:\Projects\deepmindcheck\core\views.py changed, reloading.
+Watching for file changes with StatReloader
+Home page accessed from 127.0.0.1
+"GET / HTTP/1.1" 200 20125
+"GET /about/ HTTP/1.1" 200 15844
+"GET /static/images/team/MyPic.jpg HTTP/1.1" 404 1923
+Home page accessed from 127.0.0.1
+"GET / HTTP/1.1" 200 20125

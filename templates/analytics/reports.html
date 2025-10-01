@@ -1,0 +1,190 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Analytics Reports - DeepMindCheck{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold text-gradient">Detailed Reports</h1>
+        <p class="lead text-muted">Comprehensive analysis of platform usage and performance</p>
+    </div>
+    
+    <!-- Summary Statistics -->
+    <div class="row mb-5">
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="stats-card">
+                <div class="stats-number text-primary">{{ total_analyses }}</div>
+                <div class="stats-label">Total Analyses</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="stats-card">
+                <div class="stats-number text-success">{{ feedback_stats.total_feedback }}</div>
+                <div class="stats-label">Total Feedback</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="stats-card">
+                <div class="stats-number text-warning">{{ feedback_rate }}%</div>
+                <div class="stats-label">Feedback Rate</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="stats-card">
+                <div class="stats-number text-info">{{ feedback_stats.avg_rating|floatformat:1 }}</div>
+                <div class="stats-label">Avg Rating</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Prediction Distribution -->
+    <div class="row mb-5">
+        <div class="col-lg-6">
+            <div class="glass-card p-4">
+                <h4 class="mb-4">Prediction Distribution</h4>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Prediction Type</th>
+                                <th>Count</th>
+                                <th>Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pred in predictions %}
+                            <tr>
+                                <td>
+                                    <span class="badge bg-primary">{{ pred.prediction|title }}</span>
+                                </td>
+                                <td>{{ pred.count }}</td>
+                                <td>{{ pred.percentage }}%</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- User Satisfaction -->
+        <div class="col-lg-6">
+            <div class="glass-card p-4">
+                <h4 class="mb-4">User Satisfaction</h4>
+                <div class="mb-3">
+                    {% for s in star_stats %}
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="me-3">
+                                <span class="badge bg-warning">{{ s.star }} ⭐</span>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="progress" style="height: 20px;">
+                                    <div class="progress-bar 
+                                        {% if s.star == 5 %}bg-success
+                                        {% elif s.star == 4 %}bg-primary
+                                        {% elif s.star == 3 %}bg-warning
+                                        {% elif s.star == 2 %}bg-orange
+                                        {% else %}bg-danger{% endif %}"
+                                         role="progressbar"
+                                         style="width: {{ s.percentage }}%;">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ms-3">
+                                {{ s.count }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Model Performance -->
+    <div class="glass-card p-4 mb-5">
+        <h4 class="mb-4">Model Performance Comparison</h4>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>Usage Count</th>
+                        <th>Avg Confidence</th>
+                        <th>Avg Response Time</th>
+                        <th>Usage %</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for model in model_performance %}
+                    <tr>
+                        <td>
+                            <span class="badge bg-info">{{ model.model_used|title }}</span>
+                        </td>
+                        <td>{{ model.count }}</td>
+                        <td>{{ model.avg_confidence|floatformat:3 }}</td>
+                        <td>{{ model.avg_response_time|floatformat:3 }}s</td>
+                        <td>{{ model.usage_pct }}%</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Recent Activity Chart -->
+    <div class="glass-card p-4 mb-5">
+        <h4 class="mb-4">Recent Activity (Last 30 Days)</h4>
+        <canvas id="activityChart" height="100"></canvas>
+    </div>
+    
+    <!-- Export Options -->
+    <div class="text-center">
+        <h4 class="mb-4">Export Data</h4>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="{% url 'analytics_export' %}?type=analyses" class="btn btn-primary">
+                <i class="fas fa-download me-2"></i>Export Analyses
+            </a>
+            <a href="{% url 'analytics_export' %}?type=feedback" class="btn btn-success">
+                <i class="fas fa-download me-2"></i>Export Feedback
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js Data -->
+{{ recent_activity_labels|json_script:"activity-labels" }}
+{{ recent_activity_data|json_script:"activity-data" }}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const labels = JSON.parse(document.getElementById('activity-labels').textContent);
+  const data = JSON.parse(document.getElementById('activity-data').textContent);
+
+  const ctx = document.getElementById('activityChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Analyses per Day',
+        data: data,
+        borderColor: 'blue',
+        backgroundColor: 'rgba(0, 123, 255, 0.2)',
+        fill: true,
+        tension: 0.3
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        x: { display: true },
+        y: { beginAtZero: true }
+      }
+    }
+  });
+</script>
+{% endblock %}
