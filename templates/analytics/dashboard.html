@@ -5,7 +5,7 @@
 
 {% block extra_css %}
 <style>
-    .analytics-dashboard .stats-grid {
+    .stats-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
         gap: 2rem;
@@ -17,13 +17,13 @@
         border-radius: var(--border-radius);
         padding: 2rem;
         box-shadow: var(--shadow-md);
-        height: 400px;
+        margin-bottom: 2rem;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container py-5 analytics-dashboard">
+<div class="container py-5">
     <div class="text-center mb-5">
         <h1 class="display-4 fw-bold text-gradient">Analytics Dashboard</h1>
         <p class="lead text-muted">Real-time insights and performance metrics</p>
@@ -32,54 +32,104 @@
     <!-- Statistics Cards -->
     <div class="stats-grid">
         <div class="stats-card">
-            <div class="stats-number text-primary" id="stat-total_analyses">0</div>
+            <div class="stats-number text-primary" id="stat-total">-</div>
             <div class="stats-label">Total Analyses</div>
-            <i class="fas fa-brain fa-2x text-primary opacity-50"></i>
         </div>
         
         <div class="stats-card">
-            <div class="stats-number text-success" id="stat-avg_confidence">0</div>
+            <div class="stats-number text-success" id="stat-confidence">-%</div>
             <div class="stats-label">Avg Confidence</div>
-            <i class="fas fa-chart-line fa-2x text-success opacity-50"></i>
         </div>
         
         <div class="stats-card">
-            <div class="stats-number text-warning" id="stat-total_feedback">0</div>
+            <div class="stats-number text-warning" id="stat-feedback">-</div>
             <div class="stats-label">User Feedback</div>
-            <i class="fas fa-star fa-2x text-warning opacity-50"></i>
         </div>
         
         <div class="stats-card">
-            <div class="stats-number text-info" id="stat-avg_rating">0</div>
+            <div class="stats-number text-info" id="stat-rating">-</div>
             <div class="stats-label">Avg Rating</div>
-            <i class="fas fa-thumbs-up fa-2x text-info opacity-50"></i>
         </div>
     </div>
     
     <!-- Charts -->
     <div class="row">
-        <div class="col-lg-6 mb-4">
+        <div class="col-lg-6">
             <div class="chart-container">
                 <h5 class="mb-3">Prediction Distribution</h5>
-                <canvas id="predictionsChart"></canvas>
+                <canvas id="predictionsChart" height="300"></canvas>
             </div>
         </div>
         
-        <div class="col-lg-6 mb-4">
+        <div class="col-lg-6">
             <div class="chart-container">
-                <h5 class="mb-3">Confidence Trends</h5>
-                <canvas id="confidenceChart"></canvas>
+                <h5 class="mb-3">Daily Activity (Last 7 Days)</h5>
+                <canvas id="activityChart" height="300"></canvas>
             </div>
         </div>
     </div>
     
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="chart-container">
-                <h5 class="mb-3">Model Performance Comparison</h5>
-                <canvas id="modelChart"></canvas>
-            </div>
-        </div>
+    <div class="chart-container">
+        <h5 class="mb-3">Model Performance</h5>
+        <canvas id="modelChart" height="200"></canvas>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Fetch analytics data
+fetch('/api/analytics/dashboard/')
+    .then(response => response.json())
+    .then(data => {
+        // Update stats
+        document.getElementById('stat-total').textContent = data.total_analyses;
+        document.getElementById('stat-confidence').textContent = (data.average_rating * 20).toFixed(1) + '%';
+        document.getElementById('stat-feedback').textContent = data.feedback_count;
+        document.getElementById('stat-rating').textContent = data.average_rating.toFixed(1);
+        
+        // Predictions Chart
+        const predData = data.prediction_distribution;
+        new Chart(document.getElementById('predictionsChart'), {
+            type: 'doughnut',
+            data: {
+                labels: predData.map(p => p.prediction),
+                datasets: [{
+                    data: predData.map(p => p.count),
+                    backgroundColor: ['#667eea', '#764ba2', '#10b981']
+                }]
+            }
+        });
+        
+        // Activity Chart
+        const actData = data.daily_activity;
+        new Chart(document.getElementById('activityChart'), {
+            type: 'line',
+            data: {
+                labels: actData.map(d => d.date),
+                datasets: [{
+                    label: 'Analyses',
+                    data: actData.map(d => d.count),
+                    borderColor: '#667eea',
+                    tension: 0.4
+                }]
+            }
+        });
+        
+        // Model Chart
+        const modelData = data.model_statistics;
+        new Chart(document.getElementById('modelChart'), {
+            type: 'bar',
+            data: {
+                labels: modelData.map(m => m.model_used),
+                datasets: [{
+                    label: 'Usage Count',
+                    data: modelData.map(m => m.count),
+                    backgroundColor: '#10b981'
+                }]
+            }
+        });
+    })
+    .catch(err => console.error('Failed to load analytics:', err));
+</script>
 {% endblock %}

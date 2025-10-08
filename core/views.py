@@ -79,8 +79,10 @@ def about_view(request):
             {
                 'name': 'Paul Kisilu Nzioki',
                 'role': 'Lead Developer & Researcher',
-                'description': 'Undergraduate student specializing in AI and mental health applications.',
-                'image': 'images/team/MyPic.jpg'
+                'description': 'Software Engineer specializing in AI and mental health applications.',
+                # 'image': 'images/team/MyPic.jpg'
+                'image': 'team/MyPic.jpg',
+                'use_media': True
             }
         ],
         'statistics': {

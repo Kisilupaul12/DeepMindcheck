@@ -94,6 +94,27 @@
         <h2 class="display-5 fw-bold text-center mb-5">Our Team</h2>
         <div class="row justify-content-center">
             {% for member in team %}
+<div class="col-lg-4 mb-4" data-aos="zoom-in">
+    <div class="feature-card text-center">
+        <div class="mb-3">
+            {% if member.image %}
+                {% if member.use_media %}
+                    <img src="{{ MEDIA_URL }}{{ member.image }}" alt="{{ member.name }}" 
+                         class="rounded-circle" width="120" height="120"
+                         style="object-fit: cover;">
+                {% else %}
+                    {% load static %}
+                    <img src="{% static member.image %}" alt="{{ member.name }}" 
+                         class="rounded-circle" width="120" height="120"
+                         style="object-fit: cover;">
+                {% endif %}
+            {% else %}
+                <div class="feature-icon icon-primary mx-auto" style="width: 120px; height: 120px; font-size: 3rem;">
+                    <i class="fas fa-user"></i>
+                </div>
+            {% endif %}
+        </div>
+            <!-- {% for member in team %}
             <div class="col-lg-4 mb-4" data-aos="zoom-in">
                 <div class="feature-card text-center">
                     <div class="mb-3">
@@ -112,7 +133,9 @@
                 </div>
             </div>
             {% endfor %}
-        </div>
+        </div> -->
+
+
     </div>
 </section>
 

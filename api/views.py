@@ -1,18 +1,23 @@
+"""
+Updated API Views - Real ML Model Integration
+Replace your existing api/views.py with this
+"""
+
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
 from core.models import TextAnalysis, UserFeedback, SystemMetrics
 from django.db.models import Count, Avg, Q
 from django.utils import timezone
 import json
 import time
-import random
-import uuid
 import logging
+
+# Import our ML predictor
+from ml_models import get_predictor
 
 logger = logging.getLogger('deepmindcheck')
 
@@ -20,7 +25,7 @@ logger = logging.getLogger('deepmindcheck')
 @permission_classes([AllowAny])
 def analyze_text(request):
     """
-    Advanced text analysis endpoint with demo functionality
+    Real ML-powered text analysis endpoint
     """
     try:
         # Get request data
@@ -44,12 +49,28 @@ def analyze_text(request):
                 'error': 'Text must be less than 2000 characters'
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        # Simulate processing time
+        # Start timing
         start_time = time.time()
-        time.sleep(random.uniform(0.3, 0.8))  # Realistic processing delay
         
-        # Demo prediction logic (replace with real model)
-        prediction, confidence, probabilities = generate_demo_prediction(text)
+        # Get predictor and make prediction
+        try:
+            predictor = get_predictor()
+            
+            # Make prediction using real ML model
+            ml_result = predictor.predict(text, include_probabilities=True)
+            
+            prediction = ml_result['prediction']
+            confidence = ml_result['confidence']
+            probabilities = ml_result['probabilities']
+            model_used = ml_result['model_name']
+            
+            logger.info(f"ML Prediction: {prediction} ({confidence:.3f})")
+            
+        except Exception as e:
+            logger.error(f"ML prediction failed: {e}")
+            return Response({
+                'error': f'Analysis failed: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
         processing_time = time.time() - start_time
         
@@ -73,7 +94,7 @@ def analyze_text(request):
             'prediction': prediction,
             'confidence': confidence,
             'probabilities': probabilities,
-            'model_used': model_choice,
+            'model_used': model_used,
             'processing_time': round(processing_time, 3),
             'text_length': len(text),
             'message': generate_message(prediction, confidence),
@@ -84,7 +105,7 @@ def analyze_text(request):
         if include_explanation:
             response_data['explanation'] = generate_explanation(prediction, confidence, text)
         
-        logger.info(f"Text analysis completed: {prediction} ({confidence:.3f}) - {len(text)} chars")
+        logger.info(f"Analysis completed: {prediction} ({confidence:.3f}) - {len(text)} chars")
         
         return Response(response_data, status=status.HTTP_200_OK)
         
@@ -94,62 +115,166 @@ def analyze_text(request):
             'error': 'Analysis failed. Please try again.'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-def generate_demo_prediction(text):
-    """Generate realistic demo predictions based on text content"""
-    
-    text_lower = text.lower()
-    
-    # Keywords for different mental health states
-    depression_keywords = ['sad', 'depressed', 'hopeless', 'worthless', 'tired', 'empty', 'lonely', 'useless']
-    anxiety_keywords = ['anxious', 'worried', 'nervous', 'panic', 'stress', 'overwhelmed', 'scared', 'fear']
-    neutral_keywords = ['happy', 'good', 'great', 'excited', 'positive', 'love', 'joy', 'wonderful']
-    
-    # Count keyword matches
-    depression_score = sum(1 for word in depression_keywords if word in text_lower)
-    anxiety_score = sum(1 for word in anxiety_keywords if word in text_lower)
-    neutral_score = sum(1 for word in neutral_keywords if word in text_lower)
-    
-    # Determine prediction based on scores
-    if depression_score > anxiety_score and depression_score > neutral_score:
-        prediction = 'depression'
-        base_confidence = 0.7 + (depression_score * 0.05)
-    elif anxiety_score > depression_score and anxiety_score > neutral_score:
-        prediction = 'anxiety'
-        base_confidence = 0.7 + (anxiety_score * 0.05)
-    elif neutral_score > 0:
-        prediction = 'neutral'
-        base_confidence = 0.6 + (neutral_score * 0.05)
-    else:
-        # Default to neutral with lower confidence
-        prediction = 'neutral'
-        base_confidence = 0.5
-    
-    # Add some randomness but keep it realistic
-    confidence = min(0.95, max(0.3, base_confidence + random.uniform(-0.1, 0.1)))
-    
-    # Generate probabilities
-    probabilities = generate_probabilities(prediction, confidence)
-    
-    return prediction, confidence, probabilities
 
-def generate_probabilities(prediction, confidence):
-    """Generate realistic probability distribution"""
-    
-    probs = {'neutral': 0.33, 'depression': 0.33, 'anxiety': 0.33}
-    probs[prediction] = confidence
-    
-    remaining = 1.0 - confidence
-    other_classes = [k for k in probs.keys() if k != prediction]
-    
-    for i, other in enumerate(other_classes):
-        if i == len(other_classes) - 1:
-            probs[other] = remaining
-        else:
-            prob = random.uniform(0.05, remaining - 0.05)
-            probs[other] = prob
-            remaining -= prob
-    
-    return probs
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def submit_feedback(request):
+    """Submit user feedback for an analysis"""
+    try:
+        analysis_id = request.data.get('analysis_id')
+        rating = request.data.get('rating')
+        feedback_text = request.data.get('feedback_text', '')
+        is_helpful = request.data.get('is_helpful')
+        
+        # Validation
+        if not analysis_id:
+            return Response({'error': 'Analysis ID required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if not rating or rating not in [1, 2, 3, 4, 5]:
+            return Response({'error': 'Rating must be 1-5'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Get analysis
+        try:
+            analysis = TextAnalysis.objects.get(id=analysis_id)
+        except TextAnalysis.DoesNotExist:
+            return Response({'error': 'Analysis not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Check if feedback already exists
+        if hasattr(analysis, 'feedback'):
+            return Response({'error': 'Feedback already submitted'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Create feedback
+        feedback = UserFeedback.objects.create(
+            analysis=analysis,
+            rating=rating,
+            feedback_text=feedback_text,
+            is_helpful=is_helpful
+        )
+        
+        logger.info(f"Feedback submitted: {rating}/5 for analysis {analysis_id}")
+        
+        return Response({
+            'success': True,
+            'message': 'Thank you for your feedback!',
+            'feedback_id': feedback.id
+        }, status=status.HTTP_201_CREATED)
+        
+    except Exception as e:
+        logger.error(f"Feedback error: {str(e)}")
+        return Response({
+            'error': 'Failed to submit feedback'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def analytics_dashboard_data(request):
+    """Get analytics data for dashboard"""
+    try:
+        # Overall statistics
+        total_analyses = TextAnalysis.objects.count()
+        
+        # Prediction distribution
+        prediction_dist = TextAnalysis.objects.values('prediction').annotate(
+            count=Count('prediction')
+        ).order_by('-count')
+        
+        # Model performance
+        model_stats = TextAnalysis.objects.values('model_used').annotate(
+            count=Count('model_used'),
+            avg_confidence=Avg('confidence_score'),
+            avg_time=Avg('processing_time')
+        )
+        
+        # Feedback statistics
+        feedback_count = UserFeedback.objects.count()
+        avg_rating = UserFeedback.objects.aggregate(Avg('rating'))['rating__avg'] or 0
+        
+        # Recent activity (last 7 days)
+        week_ago = timezone.now() - timezone.timedelta(days=7)
+        daily_counts = []
+        for i in range(7):
+            date = (timezone.now() - timezone.timedelta(days=i)).date()
+            count = TextAnalysis.objects.filter(created_at__date=date).count()
+            daily_counts.append({
+                'date': date.strftime('%Y-%m-%d'),
+                'count': count
+            })
+        daily_counts.reverse()
+        
+        data = {
+            'total_analyses': total_analyses,
+            'feedback_count': feedback_count,
+            'average_rating': round(avg_rating, 2),
+            'feedback_rate': round((feedback_count / max(total_analyses, 1)) * 100, 1),
+            'prediction_distribution': list(prediction_dist),
+            'model_statistics': list(model_stats),
+            'daily_activity': daily_counts
+        }
+        
+        return Response(data, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        logger.error(f"Analytics error: {str(e)}")
+        return Response({
+            'error': 'Failed to fetch analytics'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def model_info(request):
+    """Get information about the loaded ML model"""
+    try:
+        predictor = get_predictor()
+        info = predictor.get_model_info()
+        
+        return Response(info, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        logger.error(f"Model info error: {str(e)}")
+        return Response({
+            'error': 'Failed to get model information',
+            'status': 'error'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def health_check(request):
+    """API health check endpoint"""
+    try:
+        # Check if ML model is loaded
+        predictor = get_predictor()
+        model_loaded = predictor.is_loaded
+        
+        # Check database
+        db_healthy = TextAnalysis.objects.count() >= 0
+        
+        health_data = {
+            'status': 'healthy' if (model_loaded and db_healthy) else 'degraded',
+            'timestamp': timezone.now().isoformat(),
+            'components': {
+                'ml_model': 'loaded' if model_loaded else 'not_loaded',
+                'database': 'connected' if db_healthy else 'error'
+            }
+        }
+        
+        status_code = status.HTTP_200_OK if health_data['status'] == 'healthy' else status.HTTP_503_SERVICE_UNAVAILABLE
+        
+        return Response(health_data, status=status_code)
+        
+    except Exception as e:
+        logger.error(f"Health check error: {str(e)}")
+        return Response({
+            'status': 'unhealthy',
+            'error': str(e)
+        }, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+
+# Helper Functions
+
+import uuid
 
 def generate_message(prediction, confidence):
     """Generate contextual message based on prediction"""
@@ -173,7 +298,8 @@ def generate_message(prediction, confidence):
     }
     
     level = 'high' if confidence > 0.7 else 'medium' if confidence > 0.5 else 'low'
-    return messages[prediction][level]
+    return messages.get(prediction, {}).get(level, "Analysis complete.")
+
 
 def generate_recommendations(prediction):
     """Generate helpful recommendations based on prediction"""
@@ -182,21 +308,27 @@ def generate_recommendations(prediction):
         'neutral': [
             "Continue healthy lifestyle habits and regular exercise",
             "Maintain strong social connections with friends and family",
-            "Practice mindfulness or meditation regularly"
+            "Practice mindfulness or meditation regularly",
+            "Keep a gratitude journal to maintain positive outlook"
         ],
         'depression': [
             "Consider speaking with a mental health professional",
             "Reach out to trusted friends, family members, or support groups", 
-            "Maintain physical activity and spend time in natural light"
+            "Maintain physical activity and spend time in natural light",
+            "Establish a regular sleep schedule and healthy routine",
+            "Avoid isolation - stay connected with supportive people"
         ],
         'anxiety': [
             "Practice deep breathing exercises and progressive muscle relaxation",
             "Try mindfulness meditation or grounding techniques",
-            "Consider limiting caffeine intake and maintaining regular sleep"
+            "Consider limiting caffeine intake and maintaining regular sleep",
+            "Engage in regular physical exercise to reduce stress",
+            "Talk to a counselor or therapist about anxiety management"
         ]
     }
     
-    return recommendations[prediction]
+    return recommendations.get(prediction, [])
+
 
 def generate_explanation(prediction, confidence, text):
     """Generate explanation for the prediction"""
@@ -217,10 +349,12 @@ def generate_explanation(prediction, confidence, text):
         confidence_explanation += "This indicates lower certainty, suggesting mixed or unclear patterns."
     
     return {
-        'reasoning': explanations[prediction],
+        'reasoning': explanations.get(prediction, "Analysis complete."),
         'confidence_explanation': confidence_explanation,
+        'model_details': f"Using gradient boosting model with character-level TF-IDF features.",
         'disclaimer': 'This analysis is for informational purposes only and is not a substitute for professional medical advice, diagnosis, or treatment.'
     }
+
 
 def get_client_ip(request):
     """Get client IP address from request"""
@@ -230,43 +364,3 @@ def get_client_ip(request):
     else:
         ip = request.META.get('REMOTE_ADDR')
     return ip
-
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def submit_feedback(request):
-    """Submit user feedback"""
-    try:
-        analysis_id = request.data.get('analysis_id')
-        rating = request.data.get('rating')
-        
-        analysis = TextAnalysis.objects.get(id=analysis_id)
-        UserFeedback.objects.create(analysis=analysis, rating=rating)
-        
-        return Response({'message': 'Feedback submitted'}, status=status.HTTP_201_CREATED)
-    except Exception as e:
-        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def analytics_dashboard_data(request):
-    """Get analytics data"""
-    data = {
-        'stats': {'total_analyses': TextAnalysis.objects.count()},
-        'charts': {}
-    }
-    return Response(data)
-
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def model_info(request):
-    """Get model information"""
-    return Response({
-        'available_models': ['baseline', 'advanced', 'ensemble'],
-        'default_model': 'baseline'
-    })
-
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def health_check(request):
-    """API health check"""
-    return Response({'status': 'healthy'})

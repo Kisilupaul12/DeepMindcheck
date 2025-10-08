@@ -10,7 +10,7 @@ class TextAnalysis(models.Model):
         ('neutral', 'Neutral'),
         ('depression', 'Depression'),  
         ('anxiety', 'Anxiety'),
-        ('stress', 'Stress'),
+        
     ]
     
     MODEL_CHOICES = [
