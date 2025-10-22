@@ -78,7 +78,31 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'deepmindcheck.wsgi.application'
 
-# Database
+# # Database
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+# # Database configuration for Railway
+# if 'DATABASE_URL' in os.environ:
+#     DATABASES['default'] = dj_database_url.config(
+#         conn_max_age=600,
+#         conn_health_checks=True,
+#     )
+
+# ==============================
+# DATABASE CONFIGURATION
+# ==============================
+import os
+import dj_database_url
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Default local database (for development)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -86,12 +110,15 @@ DATABASES = {
     }
 }
 
-# Database configuration for Railway
+# Use Railway PostgreSQL database if available
 if 'DATABASE_URL' in os.environ:
     DATABASES['default'] = dj_database_url.config(
+        default=os.environ['DATABASE_URL'],
         conn_max_age=600,
         conn_health_checks=True,
+        ssl_require=True,   # important for production
     )
+
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
