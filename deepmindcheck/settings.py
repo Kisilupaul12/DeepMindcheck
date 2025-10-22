@@ -96,28 +96,37 @@ WSGI_APPLICATION = 'deepmindcheck.wsgi.application'
 # ==============================
 # DATABASE CONFIGURATION
 # ==============================
+# ==============================
+# DATABASE CONFIGURATION
+# ==============================
 import os
 import dj_database_url
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Default local database (for development)
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+# Default to SQLite for local development
+default_db = {
+    'ENGINE': 'django.db.backends.sqlite3',
+    'NAME': BASE_DIR / 'db.sqlite3',
 }
 
-# Use Railway PostgreSQL database if available
-if 'DATABASE_URL' in os.environ:
-    DATABASES['default'] = dj_database_url.config(
-        default=os.environ['DATABASE_URL'],
-        conn_max_age=600,
-        conn_health_checks=True,
-        ssl_require=True,   # important for production
-    )
+# Use Railway PostgreSQL if DATABASE_URL exists
+if os.environ.get('DATABASE_URL'):
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.environ['DATABASE_URL'],
+            conn_max_age=600,
+            conn_health_checks=True,
+            ssl_require=True
+        )
+    }
+else:
+    DATABASES = {
+        'default': default_db
+    }
+
+
 
 
 # Password validation
