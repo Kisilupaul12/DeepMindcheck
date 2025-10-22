@@ -4,6 +4,7 @@ Professional mental health text analysis platform.
 """
 
 from pathlib import Path
+import dj_database_url 
 import os
 from dotenv import load_dotenv
 
@@ -86,7 +87,6 @@ DATABASES = {
 }
 
 # Database configuration for Railway
-import dj_database_url
 if 'DATABASE_URL' in os.environ:
     DATABASES['default'] = dj_database_url.config(
         conn_max_age=600,
