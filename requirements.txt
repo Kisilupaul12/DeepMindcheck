@@ -9,5 +9,10 @@ python-dotenv==1.1.1
 sqlparse==0.5.3
 tzdata==2025.2
 whitenoise==6.11.0
-django-cors-headers==4.4.0
+django-cors-headers==4.9.0
 
+# Machine Learning Dependencies
+numpy==2.1.2
+scikit-learn==1.5.2
+pandas==2.2.3
+joblib==1.4.2
