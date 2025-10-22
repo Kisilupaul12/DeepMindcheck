@@ -1,0 +1,1 @@
+web: gunicorn deepmindcheck.wsgi --log-file -

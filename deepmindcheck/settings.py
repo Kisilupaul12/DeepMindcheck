@@ -19,7 +19,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-dev-key-change-in-producti
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '.herokuapp.com', '.railway.app']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '.herokuapp.com', '.railway.app','.up.railway.app']
 
 # Application definition
 DJANGO_APPS = [
@@ -47,6 +47,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -83,6 +84,14 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# Database configuration for Railway
+import dj_database_url
+if 'DATABASE_URL' in os.environ:
+    DATABASES['default'] = dj_database_url.config(
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -125,6 +134,15 @@ STATICFILES_DIRS = [
 
 # Where collectstatic will copy all files for deployment
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+
 
 # Media files (user uploads)
 MEDIA_URL = '/media/'
