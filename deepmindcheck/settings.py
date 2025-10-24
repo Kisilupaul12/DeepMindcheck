@@ -18,7 +18,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-dev-key-change-in-production-12345')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '.herokuapp.com', '.railway.app','.up.railway.app']
 
@@ -118,7 +120,7 @@ if os.environ.get('DATABASE_URL'):
             default=os.environ['DATABASE_URL'],
             conn_max_age=600,
             conn_health_checks=True,
-            ssl_require=True
+            ssl_require=False
         )
     }
 else:
