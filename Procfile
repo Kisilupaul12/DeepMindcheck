@@ -1,2 +1,1 @@
-release: python manage.py migrate
-web: gunicorn deepmindcheck.wsgi --log-file -
+web: python manage.py migrate --noinput && gunicorn deepmindcheck.wsgi:application --bind 0.0.0.0:$PORT
