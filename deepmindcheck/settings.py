@@ -437,3 +437,13 @@ VERSION = "1.0.0"
 
 MODELS_DIR = BASE_DIR / 'trained_models'
 MAX_TEXT_LENGTH = 2000
+
+
+# Disable all migrations since the project doesn't need a database
+class DisableMigrations:
+    def __contains__(self, item):
+        return True
+    def __getitem__(self, item):
+        return None
+
+MIGRATION_MODULES = DisableMigrations()
