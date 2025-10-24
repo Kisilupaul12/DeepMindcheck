@@ -4,5 +4,8 @@ nixPkgs = ["python311", "sqlite"]
 [phases.install]
 cmds = ["pip install -r requirements.txt"]
 
+[phases.build]
+cmds = ["python manage.py collectstatic --noinput"]
+
 [start]
-cmd = "gunicorn deepmindcheck.wsgi:application --bind 0.0.0.0:$PORT"
+cmd = "python manage.py migrate && gunicorn deepmindcheck.wsgi:application --bind 0.0.0.0:$PORT"
